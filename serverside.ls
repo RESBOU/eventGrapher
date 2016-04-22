@@ -62,7 +62,7 @@ initAPI = -> new p (resolve,reject) ~>
 
 initRoutes = -> new p (resolve,reject) ~>
   env.app.get '/view/:id', (req,res) ->
-    res.render 'view', { layout: 'layout', id: req.params.id, data: env.data[req.params.id] }
+    res.render 'view', { layout: 'layout', id: req.params.id, data: env.data[req.params.id] or { id: req.params.id , data: []} }
   resolve!
   
 initRibcage()
