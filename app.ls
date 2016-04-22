@@ -1,4 +1,5 @@
 require! {
+  util
   ribcage
   leshdash: { mapValues, each, assign }
   bluebird: p
@@ -31,24 +32,33 @@ initRibcage = -> new p (resolve,reject) ~>
     if err then return reject err
     else resolve modules
 
-initAPI = -> new p (resolve,reject) ~>    
+initAPI = -> new p (resolve,reject) ~>
+  env.data = {}
+  env.idCnt = 0
+
+  newId = -> env.idCnt += 1
+    
   env.app.use (err, req, res, next) ~>
     res.status(500).send util.inspect(err)
     throw err
       
-  env.app.post '/add', (req,res) -> 
-    console.log req.body
-    res.end "ok"
+  env.app.post '/add', (req,res) ->
+    if not req.body.id then req.body.id = newId()
+    env.data[req.body.id] = req.body
+    console.log 'add', req.body
+    
+    res.end String req.body.id
     
   resolve!
 
 initRoutes = -> new p (resolve,reject) ~>
-  env.app.get '/view', (req,res) ->
-    res.end "ok"
-
-
+  env.app.get '/view/:id', (req,res) ->
+    res.render 'view', { id: req.params.id, data: env.data[req.params.id] }
+  resolve!
+  
 initRibcage()
 .then initAPI
+.then initRoutes
 .then -> new p (resolve,reject) ~>
   env.log 'running', {}, 'init', 'ok'
   resolve!
