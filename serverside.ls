@@ -4,9 +4,10 @@ require! {
   leshdash: { mapValues, each, assign }
   bluebird: p
   
-  express  
+  express
   ejs
   'body-parser'
+  'socket.io': io
 }
 
 env = {}
@@ -17,6 +18,7 @@ settings = do
       port: 3002
       configure: ->
         it.set 'x-powered-by', false
+ 
         it.use bodyParser.json()
         it.use express.static __dirname + '/static', do
           etag: true
@@ -24,6 +26,7 @@ settings = do
         
         it.set 'view engine', 'ejs'
         it.set 'views', __dirname + '/views'
+        
 
 env.settings = assign settings, require './settings'
 
@@ -31,6 +34,12 @@ initRibcage = -> new p (resolve,reject) ~>
   ribcage.init env, (err, modules) ->
     if err then return reject err
     else resolve modules
+
+initIO = -> new p (resolve,reject) ~>
+  env.io = io env.http
+  env.io.on 'connection', -> console.log "CONNECT"
+  
+  resolve!
 
 initAPI = -> new p (resolve,reject) ~>
   env.data = {}
@@ -46,18 +55,19 @@ initAPI = -> new p (resolve,reject) ~>
     if not req.body.id then req.body.id = newId()
     env.data[req.body.id] = req.body
     console.log 'add', req.body
-    
+    env.io.emit('update', req.body.id)
     res.end String req.body.id
     
   resolve!
 
 initRoutes = -> new p (resolve,reject) ~>
   env.app.get '/view/:id', (req,res) ->
-    res.render 'view', { id: req.params.id, data: env.data[req.params.id] }
+    res.render 'view', { layout: 'layout', id: req.params.id, data: env.data[req.params.id] }
   resolve!
   
 initRibcage()
 .then initAPI
+.then initIO
 .then initRoutes
 .then -> new p (resolve,reject) ~>
   env.log 'running', {}, 'init', 'ok'

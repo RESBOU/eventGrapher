@@ -21,6 +21,19 @@
     "bluebird": "^3.3.5",
     "body-parser": "^1.15.0",
     "ejs": "^2.4.1",
-    "express": "^4.13.4"
+    "ejs-locals": "^1.0.2",
+    "express": "^4.13.4",
+    "express-ejs-layouts": "^2.1.0",
+    "options": "0.0.6",
+    "react": "^15.0.1",
+    "socket.io": "^1.4.5",
+    "socket.io-client": "^1.4.5",
+    "ultron": "^1.0.2"
+  },
+  "devDependencies": {
+    "babelify": "^7.2.0",
+    "browserify": "^13.0.0",
+    "browserify-livescript": "^0.2.3",
+    "watchify": "^3.7.0"
   }
 }
