@@ -1,0 +1,20 @@
+{
+  "name": "grapher",
+  "version": "1.0.0",
+  "description": "grapher",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RESBOU/grapher.git"
+  },
+  "keywords": [],
+  "author": "lesh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RESBOU/grapher/issues"
+  },
+  "homepage": "https://github.com/RESBOU/grapher#readme"
+}
