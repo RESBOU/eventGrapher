@@ -1,5 +1,12 @@
+//@import "Font-Awesome/less/font-awesome.less";
+//@fa-font-path: "/fonts";
+
+@import (less) "../node_modules/purecss/build/pure.css";
+@import (less) "../node_modules/purecss/build/grids-responsive.css";
+
 body {
     font-family: monospace;
+    box-sizing: border-box;
 }
 
 text.eventBar {
@@ -12,6 +19,10 @@ text.eventBar {
 
 .axis text {
     font: .75em monospace;
+}
+
+svg {
+    padding: 2em;
 }
 
 .axis path,
@@ -42,3 +53,4 @@ pre.json {
     margin: 2em;
     font-weight: bold;
 }
+
