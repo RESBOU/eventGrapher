@@ -1,13 +1,33 @@
+body {
+  font-family: monospace;
+}
 text.eventBar {
   dx: 1em;
   fill: white;
-  font: 10px sans-serif;
+  font: .75em monospace;
 }
 .axis text {
-  font: 10px sans-serif;
+  font: .75em monospace;
 }
 .axis path,
 .axis line {
   fill: none;
   stroke: gray;
+}
+pre.json {
+  padding: 1em 2em;
+  margin: 2em;
+}
+pre.json .json-key {
+  color: brown;
+}
+pre.json .json-value {
+  color: navy;
+}
+pre.json .json-string {
+  color: olive;
+}
+.title {
+  margin: 2em;
+  font-weight: bold;
 }
