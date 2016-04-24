@@ -5,27 +5,26 @@ require! {
   'socket.io-client': io
   d3
   moment
+  'color-hash'
 }
 
+colorHash = new colorHash()
+
 parseDates = (data) ->
-  map data, (layer) ->
-    map layer, (event) ->
-      assign {}, event, mapValues pick(event, 'start','end'), (value) -> new moment(value).toDate()
+  map data, (event) ->
+    assign {}, event, mapValues pick(event, 'start','end'), (value) -> new moment(value).toDate()
 
 # * Draw
 draw = (data) ->
-  console.log "DRAW", flatten data
-  
-  return
-  
-  margin = {top: 30, right: 20, bottom: 30, left: 50}
+  margin = top: 30, right: 20, bottom: 30, left: 50
   width = 600 - margin.left - margin.right
   height = 270 - margin.top - margin.bottom
 
-  parseDate = d3.time.format("%d-%b-%y").parse;
-
-  x = d3.time.scale().range([0, width]);
-  y = d3.scale.linear().range([height, 0]);
+  x = d3.time.scale()
+    .range [0, width]
+    
+  y = d3.scale.linear()
+    .range [height, 0]
 
   xAxis = d3.svg.axis().scale(x)
   .orient("bottom").ticks(5);
@@ -34,36 +33,52 @@ draw = (data) ->
   .orient("left").ticks(5);
 
   valueline = d3.svg.line()
-    .x (d) -> x d.date
-    .y (d) -> y d.close
+    .x (d) -> x d.start
+    .y (d) -> y d.layer
     
-  svg = d3.select("body")
+  svg = d3.select "body"
     .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+      .attr "width", width + margin.left + margin.right
+      .attr "height", height + margin.top + margin.bottom
     .append("g")
-        .attr("transform", 
-              "translate(" + margin.left + "," + margin.top + ")")
+      .attr "transform", "translate(" + margin.left + "," + margin.top + ")"
 
-    each data, (d) -> 
-      d.date = parseDate(d.date);
-      d.close = + d.close;
+    x.domain [
+      d3.min data, (.start)
+      d3.max data, (.end) ]
+
+    y.domain [ 0, 1 + d3.max data, (.layer) ]
     
-    x.domain d3.min flattenDeep(data), (d) -> d.date
-    y.domain [0, data.length ]
+#    svg.append "path"
+#      .attr "class", "line"
+#      .attr "d", valueline data
 
-    svg.append("path")
-      .attr("class", "line")
-      .attr("d", valueline(data))
+    svg.append "g"
+      .attr "class", "x axis"
+      .attr "transform", "translate(0," + height + ")"
+      .call xAxis
+      
+    svg.append "g"
+      .attr "class", "y axis"
+      .call yAxis
 
-    svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
+    window.y = y
 
-    svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
+    eventHeight = height / y.domain()[1] / 2
+    svg.selectAll(".bar")
+        .data(data)
+        .enter()
+          .append("rect")
+          .attr "fill", ->
+            ret = d3.rgb.apply d3, colorHash.rgb it.id
+            console.log ret
+            ret
+
+          .attr "class", "bar"
+          .attr "x", -> x it.start
+          .attr "width", -> x it.end
+          .attr "y", -> y(it.layer) - eventHeight
+          .attr "height", -> eventHeight
 
 # * Socket
 socket = io window.location.host
