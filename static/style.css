@@ -2097,3 +2097,8 @@ pre.json .json-string {
   fill: none;
   stroke: silver;
 }
+.availiableGraphs a {
+  text-decoration: none;
+  font-size: 1.25em;
+  margin: .5em;
+}
