@@ -79,7 +79,7 @@ draw = (data) ->
 
     eventBar
       .append "text"
-      .attr "class", "eventBar"
+      .attr "class", "eventBarText"
       .attr "x", -> x(it.start)
       .attr "y", -> y(it.layer) - (eventHeight / 2 )
       .attr "dy", ".25em"
