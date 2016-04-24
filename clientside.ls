@@ -58,27 +58,39 @@ draw = (data) ->
       .attr "transform", "translate(0," + height + ")"
       .call xAxis
       
-    svg.append "g"
-      .attr "class", "y axis"
-      .call yAxis
+#    svg.append "g"
+#      .attr "class", "y axis"
+#      .call yAxis
 
     window.y = y
 
     eventHeight = height / y.domain()[1] / 2
-    svg.selectAll(".bar")
-        .data(data)
-        .enter()
-          .append("rect")
-          .attr "fill", ->
-            ret = d3.rgb.apply d3, colorHash.rgb it.id
-            console.log ret
-            ret
+    
+    eventBar = svg.selectAll(".bar")
+      .data(data)
+      .enter().append("g")
 
-          .attr "class", "bar"
-          .attr "x", -> x it.start
-          .attr "width", -> x it.end
-          .attr "y", -> y(it.layer) - eventHeight
-          .attr "height", -> eventHeight
+
+    eventBar
+        .append("rect")
+        .attr "class", "eventBar"
+        .attr "fill", -> d3.rgb.apply d3, colorHash.rgb it.id
+        .attr "x", -> x it.start
+        .attr "width", -> x it.end
+        .attr "y", -> y(it.layer) - eventHeight
+        .attr "height", -> eventHeight
+
+
+    eventBar
+      .append "text"
+      .attr "class", "eventBar"
+      .attr "x", -> x it.start
+      .attr "y", -> y(it.layer) - (eventHeight / 2 )
+      .attr "dy", ".25em"
+      .attr "dx", "1em"
+      .text ->
+        console.log String it.id
+        it.id
 
 # * Socket
 socket = io window.location.host
