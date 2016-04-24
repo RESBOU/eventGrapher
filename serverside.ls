@@ -1,7 +1,7 @@
 require! {
   util
   ribcage
-  leshdash: { mapValues, each, assign }
+  leshdash: { mapValues, each, assign, keys }
   bluebird: p
   
   express
@@ -56,13 +56,16 @@ initAPI = -> new p (resolve,reject) ~>
     env.data[req.body.id] = req.body
     console.log 'add', req.body
     env.io.emit('update', req.body.id)
+    env.io.emit 'graphs', keys env.data
     res.end String req.body.id
     
   resolve!
 
 initRoutes = -> new p (resolve,reject) ~>
   env.app.get '/view/:id', (req,res) ->
-    res.render 'view', { layout: 'layout', id: req.params.id, data: env.data[req.params.id] or { id: req.params.id , data: []} }
+    data = env.data[req.params.id] or { id: req.params.id , data: [] }
+    assign data, graphs: keys env.data
+    res.render 'view', { layout: 'layout', id: req.params.id, data: data}
   resolve!
   
 initRibcage()

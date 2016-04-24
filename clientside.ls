@@ -21,7 +21,6 @@ draw = (data) ->
   height = Math.floor $('body').height() / 3
   width = $('.graph').width()
   
-  console.log height
   svg = d3.select ".graph"
     .append("svg")
       .attr "width", width
@@ -85,13 +84,10 @@ draw = (data) ->
       .attr "y", -> y(it.layer) - (eventHeight / 2 )
       .attr "dy", ".25em"
       .attr "dx", "1em"
-      .text ->
-        console.log String it.id
-        it.id
+      .text -> it.id
 
 # * Text
 drawText = (data) ->
-  console.log $
   json = $ '<pre class="json"></pre>'
   json.html jsonPrint.prettyPrint data
   $('.json').append json
@@ -101,6 +97,7 @@ drawText = (data) ->
 socket = io window.location.host
 socket.on 'connect', -> console.log 'connected'
 socket.on 'update', -> if it is data.id then window.location.reload!
+socket.on 'graphs', -> showGraphs it
 socket.on 'reconnect', -> window.location.reload!
 
 data.data = parseDates (-> new moment it), data.data
@@ -109,7 +106,16 @@ data.data
   |> parseDates -> it.format('YYYY-mm-DD')
   |> drawText 
 
+
+showGraphs = (graphs) ->
+  $('.availiableGraphs').html do
+    (map graphs, -> "<a href='/view/#{it}'>#{it}</a>")
+    .join '&nbsp;'
+
+showGraphs data.graphs
+
 # * Init
 $('body').ready -> 
   data.data
     |> draw 
+
