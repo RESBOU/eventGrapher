@@ -1,20 +1,23 @@
+# * Require
 require! {
-  leshdash: { mapValues, each, assign }
+  leshdash: { mapValues, map, pick, each, assign, flattenDeep, flatten }
   bluebird: p
   'socket.io-client': io
   d3
+  moment
 }
 
-socket = io window.location.host
-socket.on 'connect', -> console.log 'connected'
-socket.on 'update', -> if it is data.id then window.location.reload!
-socket.on 'reconnect', -> window.location.reload!
-console.log 'data:',window.data
+parseDates = (data) ->
+  map data, (layer) ->
+    map layer, (event) ->
+      assign {}, event, mapValues pick(event, 'start','end'), (value) -> new moment(value).toDate()
 
-
-
-
+# * Draw
 draw = (data) ->
+  console.log "DRAW", flatten data
+  
+  return
+  
   margin = {top: 30, right: 20, bottom: 30, left: 50}
   width = 600 - margin.left - margin.right
   height = 270 - margin.top - margin.bottom
@@ -42,12 +45,12 @@ draw = (data) ->
         .attr("transform", 
               "translate(" + margin.left + "," + margin.top + ")")
 
-    data.forEach (d) -> 
+    each data, (d) -> 
       d.date = parseDate(d.date);
       d.close = + d.close;
-
-    x.domain d3.extent data, (d) -> d.date
-    y.domain [0, d3.max(data, (d) ->  d.close) ]
+    
+    x.domain d3.min flattenDeep(data), (d) -> d.date
+    y.domain [0, data.length ]
 
     svg.append("path")
       .attr("class", "line")
@@ -61,3 +64,14 @@ draw = (data) ->
     svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
+
+# * Socket
+socket = io window.location.host
+socket.on 'connect', -> console.log 'connected'
+socket.on 'update', -> if it is data.id then window.location.reload!
+socket.on 'reconnect', -> window.location.reload!
+
+# * Init
+data.data
+  |> parseDates
+  |> draw 
