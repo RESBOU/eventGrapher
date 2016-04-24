@@ -2081,5 +2081,7 @@ pre.json .json-string {
 }
 .title {
   margin: 2em;
+  font-size: 1.25em;
   font-weight: bold;
+  position: absolute;
 }
