@@ -18,7 +18,7 @@ parseDates = (parser, data) -->
 
 # * Draw
 draw = (data) ->
-  height = Math.floor $('body').height() / 3
+  height = Math.floor $(window).height() / 3
   width = $('.graph').width()
   
   svg = d3.select ".graph"
@@ -58,7 +58,8 @@ draw = (data) ->
       .attr "transform", "translate(0," + (height + 10) + ")"
       .call xAxis
 
-    eventHeight = height / y.domain()[1] / 2
+    eventHeight =  Math.floor $(window).height() /  (y.domain()[1] * 5)
+    console.log eventHeight, y.domain
     
     zoom = d3.behavior.zoom();
     
