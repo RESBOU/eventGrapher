@@ -2057,6 +2057,9 @@ svg {
   padding: 2em;
   font-size: .75em;
 }
+.availiableGraphs a {
+  display: inline-block;
+}
 div.json {
   box-sizing: border-box;
   padding-left: 2em;
@@ -2091,6 +2094,7 @@ pre.json .json-string {
   stroke: black;
   stroke-width: 1;
   stroke-opacity: .5;
+  opacity: .75;
 }
 .axis path,
 .axis line {
